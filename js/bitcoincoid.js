@@ -20,7 +20,7 @@ module.exports = class bitcoincoid extends Exchange {
             'hasFetchOHLCV': false,
             'hasFetchOrder': true,
             'hasFetchOrders': false,
-            'hasFetchClosedOrders': false,
+            'hasFetchClosedOrders': true,
             'hasFetchOpenOrders': true,
             'hasFetchMyTrades': false,
             'hasFetchCurrencies': false,
@@ -31,7 +31,7 @@ module.exports = class bitcoincoid extends Exchange {
                 'fetchOHLCV': false,
                 'fetchOrder': true,
                 'fetchOrders': false,
-                'fetchClosedOrders': false,
+                'fetchClosedOrders': true,
                 'fetchOpenOrders': true,
                 'fetchMyTrades': false,
                 'fetchCurrencies': false,
@@ -306,6 +306,11 @@ module.exports = class bitcoincoid extends Exchange {
         let response = await this.privatePostOpenOrders (this.extend (request, params));
         let orders = this.parseOrders (response['return']['orders'], market, since, limit);
         return this.filterOrdersBySymbol (orders, symbol);
+    }
+
+    async fetchClosedOrders (symbol = undefined, since = undefined, limit = undefined, params = {}) {
+        let orders = await this.fetchOrders (symbol, params);
+        return this.filterBy (orders, 'status', 'closed');
     }
 
     async createOrder (symbol, type, side, amount, price = undefined, params = {}) {
