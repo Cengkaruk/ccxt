@@ -65,6 +65,7 @@ module.exports = class bitcoincoid extends Exchange {
                         'trade',
                         'tradeHistory',
                         'openOrders',
+                        'orderHistory',
                         'getOrder',
                         'cancelOrder',
                     ],
@@ -174,13 +175,67 @@ module.exports = class bitcoincoid extends Exchange {
         return this.parseTrades (response, market, since, limit);
     }
 
+    // They give different response object for order in every pair
+    findCostByOrderSymbolAtResponse (order) {
+        let cost = undefined;
+        if ('order_idr' in order)
+            cost = this.safeFloat(order, 'order_idr');
+        if ('order_rp' in order)
+            cost = this.safeFloat(order, 'order_rp');
+        if ('order_btc' in order)
+            cost = this.safeFloat(order, 'order_btc');
+        if ('order_bch' in order)
+            cost = this.safeFloat(order, 'order_bch');
+        if ('order_btg' in order)
+            cost = this.safeFloat(order, 'order_btg');
+        if ('order_eth' in order)
+            cost = this.safeFloat(order, 'order_eth');
+        if ('order_etc' in order)
+            cost = this.safeFloat(order, 'order_etc');
+        if ('order_ltc' in order)
+            cost = this.safeFloat(order, 'order_ltc');
+        if ('order_nxt' in order)
+            cost = this.safeFloat(order, 'order_nxt');
+        if ('order_waves' in order)
+            cost = this.safeFloat(order, 'order_waves');
+        if ('order_xrp' in order)
+            cost = this.safeFloat(order, 'order_xrp');
+        if ('order_xzc' in order)
+            cost = this.safeFloat(order, 'order_xzc');
+        if ('order_str' in order)
+            cost = this.safeFloat(order, 'order_str');
+        if ('order_bts' in order)
+            cost = this.safeFloat(order, 'order_bts');
+        if ('order_drk' in order)
+            cost = this.safeFloat(order, 'order_drk');
+        if ('order_doge' in order)
+            cost = this.safeFloat(order, 'order_doge');
+        if ('order_eth' in order)
+            cost = this.safeFloat(order, 'order_eth');
+        if ('order_ltc' in order)
+            cost = this.safeFloat(order, 'order_ltc');
+        if ('order_nxt' in order)
+            cost = this.safeFloat(order, 'order_nxt');
+        if ('order_str' in order)
+            cost = this.safeFloat(order, 'order_str');
+        if ('order_nem' in order)
+            cost = this.safeFloat(order, 'order_nem');
+        if ('order_xrp' in order)
+            cost = this.safeFloat(order, 'order_xrp');
+        return cost;
+    }
+
     parseOrder (order, market = undefined) {
         let side = undefined;
         if ('type' in order)
             side = order['type'];
         let status = 'open';
         if ('status' in order)
-            status = order['status'];
+            if (order['status'] === 'filled') {
+                status = 'closed';
+            } else {
+                status = order['status'];
+            }
         let symbol = undefined;
         if (market)
             symbol = market['symbol'];
@@ -190,11 +245,7 @@ module.exports = class bitcoincoid extends Exchange {
         let fee = undefined;
         let commission = undefined;
         let price = this.safeFloat (order, 'price');
-        let cost = undefined;
-        if ('order_idr' in order)
-            cost = this.safeFloat(order, 'order_idr')
-        if ('order_rp' in order)
-            cost = this.safeFloat(order, 'order_rp')
+        let cost = this.findCostByOrderSymbolAtResponse(order);
         let amount = undefined;
         let remaining = undefined;
         let filled = undefined;
@@ -228,6 +279,18 @@ module.exports = class bitcoincoid extends Exchange {
         let orders = response['return'];
         let order = this.parseOrder (this.extend ({ 'id': id }, orders['order']), market);
         return this.extend ({ 'info': response }, order);
+    }
+
+    async fetchOrders (symbol = undefined, since = undefined, limit = undefined, params = {}) {
+        let request = {};
+        let market = undefined;
+        if (symbol) {
+            market = this.market (symbol);
+            request['pair'] = market['id'];
+        }
+        let response = await this.privatePostOrderHistory (this.extend (request, params));
+        let orders = this.parseOrders (response['return']['orders'], market, since, limit);
+        return this.filterOrdersBySymbol (orders, symbol);
     }
 
     async fetchOpenOrders (symbol = undefined, since = undefined, limit = undefined, params = {}) {
