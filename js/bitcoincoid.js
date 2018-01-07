@@ -18,7 +18,7 @@ module.exports = class bitcoincoid extends Exchange {
             // obsolete metainfo interface
             'hasFetchTickers': false,
             'hasFetchOHLCV': false,
-            'hasFetchOrder': false,
+            'hasFetchOrder': true,
             'hasFetchOrders': false,
             'hasFetchClosedOrders': false,
             'hasFetchOpenOrders': true,
@@ -29,7 +29,7 @@ module.exports = class bitcoincoid extends Exchange {
             'has': {
                 'fetchTickers': false,
                 'fetchOHLCV': false,
-                'fetchOrder': false,
+                'fetchOrder': true,
                 'fetchOrders': false,
                 'fetchClosedOrders': false,
                 'fetchOpenOrders': true,
@@ -65,6 +65,7 @@ module.exports = class bitcoincoid extends Exchange {
                         'trade',
                         'tradeHistory',
                         'openOrders',
+                        'getOrder',
                         'cancelOrder',
                     ],
                 },
@@ -178,6 +179,8 @@ module.exports = class bitcoincoid extends Exchange {
         if ('type' in order)
             side = order['type'];
         let status = 'open';
+        if ('status' in order)
+            status = order['status'];
         let symbol = undefined;
         if (market)
             symbol = market['symbol'];
@@ -187,7 +190,11 @@ module.exports = class bitcoincoid extends Exchange {
         let fee = undefined;
         let commission = undefined;
         let price = this.safeFloat (order, 'price');
-        let cost = this.safeFloat(order, 'order_idr');
+        let cost = undefined;
+        if ('order_idr' in order)
+            cost = this.safeFloat(order, 'order_idr')
+        if ('order_rp' in order)
+            cost = this.safeFloat(order, 'order_rp')
         let amount = undefined;
         let remaining = undefined;
         let filled = undefined;
@@ -210,6 +217,17 @@ module.exports = class bitcoincoid extends Exchange {
             'fee': fee,
         };
         return result;
+    }
+
+    async fetchOrder (id, symbol = undefined, params = {}) {
+        let market = this.market (symbol);
+        let response = await this.privatePostGetOrder (this.extend ({
+            'pair': market['id'],
+            'order_id': id
+        }, params));
+        let orders = response['return'];
+        let order = this.parseOrder (this.extend ({ 'id': id }, orders['order']), market);
+        return this.extend ({ 'info': response }, order);
     }
 
     async fetchOpenOrders (symbol = undefined, since = undefined, limit = undefined, params = {}) {
