@@ -179,49 +179,49 @@ module.exports = class bitcoincoid extends Exchange {
     findCostByOrderSymbolAtResponse (order) {
         let cost = undefined;
         if ('order_idr' in order)
-            cost = this.safeFloat(order, 'order_idr');
+            cost = this.safeFloat (order, 'order_idr');
         if ('order_rp' in order)
-            cost = this.safeFloat(order, 'order_rp');
+            cost = this.safeFloat (order, 'order_rp');
         if ('order_btc' in order)
-            cost = this.safeFloat(order, 'order_btc');
+            cost = this.safeFloat (order, 'order_btc');
         if ('order_bch' in order)
-            cost = this.safeFloat(order, 'order_bch');
+            cost = this.safeFloat (order, 'order_bch');
         if ('order_btg' in order)
-            cost = this.safeFloat(order, 'order_btg');
+            cost = this.safeFloat (order, 'order_btg');
         if ('order_eth' in order)
-            cost = this.safeFloat(order, 'order_eth');
+            cost = this.safeFloat (order, 'order_eth');
         if ('order_etc' in order)
-            cost = this.safeFloat(order, 'order_etc');
+            cost = this.safeFloat (order, 'order_etc');
         if ('order_ltc' in order)
-            cost = this.safeFloat(order, 'order_ltc');
+            cost = this.safeFloat (order, 'order_ltc');
         if ('order_nxt' in order)
-            cost = this.safeFloat(order, 'order_nxt');
+            cost = this.safeFloat (order, 'order_nxt');
         if ('order_waves' in order)
-            cost = this.safeFloat(order, 'order_waves');
+            cost = this.safeFloat (order, 'order_waves');
         if ('order_xrp' in order)
-            cost = this.safeFloat(order, 'order_xrp');
+            cost = this.safeFloat (order, 'order_xrp');
         if ('order_xzc' in order)
-            cost = this.safeFloat(order, 'order_xzc');
+            cost = this.safeFloat (order, 'order_xzc');
         if ('order_str' in order)
-            cost = this.safeFloat(order, 'order_str');
+            cost = this.safeFloat (order, 'order_str');
         if ('order_bts' in order)
-            cost = this.safeFloat(order, 'order_bts');
+            cost = this.safeFloat (order, 'order_bts');
         if ('order_drk' in order)
-            cost = this.safeFloat(order, 'order_drk');
+            cost = this.safeFloat (order, 'order_drk');
         if ('order_doge' in order)
-            cost = this.safeFloat(order, 'order_doge');
+            cost = this.safeFloat (order, 'order_doge');
         if ('order_eth' in order)
-            cost = this.safeFloat(order, 'order_eth');
+            cost = this.safeFloat (order, 'order_eth');
         if ('order_ltc' in order)
-            cost = this.safeFloat(order, 'order_ltc');
+            cost = this.safeFloat (order, 'order_ltc');
         if ('order_nxt' in order)
-            cost = this.safeFloat(order, 'order_nxt');
+            cost = this.safeFloat (order, 'order_nxt');
         if ('order_str' in order)
-            cost = this.safeFloat(order, 'order_str');
+            cost = this.safeFloat (order, 'order_str');
         if ('order_nem' in order)
-            cost = this.safeFloat(order, 'order_nem');
+            cost = this.safeFloat (order, 'order_nem');
         if ('order_xrp' in order)
-            cost = this.safeFloat(order, 'order_xrp');
+            cost = this.safeFloat (order, 'order_xrp');
         return cost;
     }
 
@@ -245,7 +245,7 @@ module.exports = class bitcoincoid extends Exchange {
         let fee = undefined;
         let commission = undefined;
         let price = this.safeFloat (order, 'price');
-        let cost = this.findCostByOrderSymbolAtResponse(order);
+        let cost = this.findCostByOrderSymbolAtResponse (order);
         let amount = undefined;
         let remaining = undefined;
         let filled = undefined;
