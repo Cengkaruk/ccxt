@@ -320,7 +320,7 @@ module.exports = class bitcoincoid extends Exchange {
         return await this.privatePostCancelOrder (this.extend ({
             'order_id': id,
             'pair': market['id'],
-            'type': params['side']
+            'type': params['side'],
         }, params));
     }
 
